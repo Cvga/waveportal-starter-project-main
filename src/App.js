@@ -1,12 +1,26 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 //import { ethers } from "ethers";
 import './App.css';
 
-export default function App() {
+const App = () => {
+  const checkIfWalletIsConnected = () => {
+    /*
+    * First make sure we have access to window.ethereum
+    */
+    const { ethereum } = window;
 
-  const wave = () => {
-
+    if (!ethereum) {
+      console.log("Make sure you have Metamask Account!");
+    } else {
+      console.log("We have the ethereum object", ethereum);
+    }
   }
+
+  //This runs our function when the page loads.
+
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, [])
 
   return (
     <div className="mainContainer">
@@ -23,10 +37,12 @@ export default function App() {
           I am Carlos Vega and I work on GetMaya, that's pretty cool right? Connect your Ethereum wallet and wave at me!
         </div>
 
-        <button className="waveButton" onClick={wave}>
+        <button className="waveButton" onClick={null}>
           Wave at Me
         </button>
       </div>
     </div>
   );
 }
+
+export default App
