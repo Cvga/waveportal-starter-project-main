@@ -20,7 +20,7 @@ export default function App() {
         </div>
 
         <div className="bio">
-          I am Carlos Vega and I worked on GetMaya, that's pretty cool right? Connect your Ethereum wallet and wave at me!
+          I am Carlos Vega and I work on GetMaya, that's pretty cool right? Connect your Ethereum wallet and wave at me!
         </div>
 
         <button className="waveButton" onClick={wave}>
