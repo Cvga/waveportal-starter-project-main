@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import './App.css';
-import wavePortal from "./utils/WavePortal.json";
+import wavePortal from './utils/WavePortal.json';
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -9,24 +9,23 @@ const App = () => {
   const contractAddress = "0x042D15e1103763D776c3bA14B86725b4Cd46C648";
 
   const getAllWaves = async () => {
-    const { ethereum } = window;
     try {
+      const { ethereum } = window;
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
         const wavePortalContract = new ethers.Contract(contractAddress, wavePortal.abi, signer);
-        const waves = await wavePortalContract.getAllWaves();
-        //Call the getAllWaves method from your Smart Contract
 
-        const wavesCleaned = waves.map(wave => {
-          return {
+        const waves = await wavePortalContract.getAllWaves();
+
+        let wavesCleaned = [];
+        waves.forEach(wave => {
+          wavesCleaned.push({
             address: wave.waver,
             timestamp: new Date(wave.timestamp * 1000),
-            message: wave.message,
-          };
+            message: wave.message
+          });
         });
-
-        //Store our data in React State
 
         setAllWaves(wavesCleaned);
       } else {
@@ -36,36 +35,6 @@ const App = () => {
       console.log(error);
     }
   }
-
-  useEffect(() => {
-    let wavePortalContract;
-
-    const onNewWave = (from, timestamp, message) => {
-      console.log("NewWave", from, timestamp, message);
-      setAllWaves(prevState => [
-        ...prevState,
-        {
-          address: from,
-          timestamp: new Date(timestamp * 1000),
-          message: message,
-        },
-      ]);
-    };
-
-    if (window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-
-      wavePortalContract = new ethers.Contract(contractAddress, wavePortal.abi, signer);
-      wavePortalContract.on("NewWave", onNewWave);
-    }
-
-    return () => {
-      if (wavePortalContract) {
-        wavePortalContract.off("NewWave", onNewWave);
-      }
-    };
-  }, []);
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -77,8 +46,8 @@ const App = () => {
       } else {
         console.log("We have the ethereum object", ethereum);
       }
-      //Check if we're authorized to access the user's wallet
-      const accounts = await ethereum.request({ method: "eth_accounts" });
+
+      const accounts = await ethereum.request({ method: 'eth_accounts' });
 
       if (accounts.length !== 0) {
         const account = accounts[0];
@@ -93,9 +62,6 @@ const App = () => {
     }
   }
 
-  /**
-  * Implement your connectWallet method here
-  */
   const connectWallet = async () => {
     try {
       const { ethereum } = window;
@@ -121,11 +87,12 @@ const App = () => {
       if (ethereum) {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
-        //Calling our ABI
         const wavePortalContract = new ethers.Contract(contractAddress, wavePortal.abi, signer);
 
         let count = await wavePortalContract.getTotalWaves();
-        const waveTxn = await wavePortalContract.wave('message', { gasLimit: 300000 });
+        console.log("Retrieved total wave count...", count.toNumber());
+
+        const waveTxn = await wavePortalContract.wave("This is the wave", { gasLimit: 300000 });
         console.log("Mining...", waveTxn.hash);
 
         await waveTxn.wait();
@@ -137,17 +104,18 @@ const App = () => {
         console.log("Ethereum object doesn't exist!");
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
   useEffect(() => {
     checkIfWalletIsConnected();
-  }, [])
+
+    // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="mainContainer">
-
       <div className="dataContainer">
         <div className="header">
           <span role="img" aria-label="waving hand">
@@ -158,6 +126,11 @@ const App = () => {
 
         <div className="bio">
           I am Carlos Vega and I work on GetMaya, that's pretty cool right? Connect your Ethereum wallet and wave at me!
+        </div>
+
+
+        <div className="dataContainer">
+          <h4>Send your message:</h4> <input type="text" name="kycAddress" placeholder={"Type new wave here....."} onChange={null} />
         </div>
 
         <button className="waveButton" onClick={wave}>
