@@ -92,7 +92,7 @@ const App = () => {
         let count = await wavePortalContract.getTotalWaves();
         console.log("Retrieved total wave count...", count.toNumber());
 
-        const waveTxn = await wavePortalContract.wave("This is the wave", { gasLimit: 300000 });
+        const waveTxn = await wavePortalContract.wave(message, { gasLimit: 300000 });
         console.log("Mining...", waveTxn.hash);
 
         await waveTxn.wait();
@@ -130,7 +130,7 @@ const App = () => {
 
 
         <div className="dataContainer">
-          <h4>Send your message:</h4> <input type="text" name="kycAddress" placeholder={"Type new wave here....."} onChange={null} />
+          <h4>Send your message:</h4> <input type="text" name="AddressWhitelisted" placeholder={"Wave here"} onChange={null} />
         </div>
 
         <button className="waveButton" onClick={wave}>
